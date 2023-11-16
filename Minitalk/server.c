@@ -23,7 +23,7 @@ int	ft_strlen(char *str)
 	}
 	return(i);
 }
-char ft_strjoin(char *chaine, int e)
+char *ft_strjoin(char *chaine, int e)
 {
 	char *final;
 	int	i;
@@ -35,7 +35,7 @@ char ft_strjoin(char *chaine, int e)
 	{
 		final = malloc(sizeof(char) * 2);
 		if (!final)
-			return(NULL);
+			return(0);
 		final[0] = e;
 		final[1] = '\0';
 		return (final);
@@ -56,6 +56,7 @@ void	sig_handler(int signal, siginfo_t *info, void *s)
 	int	bits;
 	int	i;
     char	*str;
+	(void)s;
 
 	bits = 0;
 	i = 0;
@@ -69,12 +70,12 @@ void	sig_handler(int signal, siginfo_t *info, void *s)
 	{
 		if(!i)
 		{
-			ft_printf("%c", str);
+			printf("%s", str);
 			free(str);
 			str = NULL;
 			kill(info->si_pid, SIGUSR1);
 		}
-		str = ft_strjoin(*str, i);
+		str = ft_strjoin(str, i);
         i = 0;
         bits = 0;
 	}
@@ -86,7 +87,7 @@ int	main(int argc, char **argv)
 	struct sigaction sig;
 
 	printf("voici le PID : %d\n", itoa(getpid()));
-	sig.sa_handler = sig_handler;
+	sig.sa_sigaction = sig_handler;
 	sigemptyset(&sig.sa_mask);
 	sig.sa_flags = SA_SIGINFO;
 	sigaction(SIGUSR1, &sig, NULL);
