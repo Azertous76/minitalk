@@ -26,11 +26,11 @@ int	is_digit(char *str)
 	return (0);
 }
 
-void	ft_cbon(int signal)
+void	ft_cbon(int signal, siginfo_t *info, void *s)
 {
+	(void)info;
+	(void)s;
 	if (signal == SIGUSR1)
-		printf("Le message est envoyer le san cho");
-	else
 		printf("Le message est envoyer le san cho");
 }
 
@@ -43,8 +43,6 @@ void	ft_char_bits(int pid, char *str)
 	while (str[i])
 	{
 		bits = 0;
-		signal(SIGUSR1, ft_cbon);
-		signal(SIGUSR2, ft_cbon);
 		while (bits < 8)
 		{
 			if ((str[i] & (0x01 << bits)) != 0)
@@ -71,7 +69,8 @@ int	main(int argc, char **argv)
 	{
 		pid = ft_atoi(argv[1]);
 		sigemptyset(&sa.sa_mask);
-		sa.sa_flags = 0;
+		sa.sa_flags = SA_SIGINFO;
+		sa.sa_sigaction = ft_cbon;
 		sigaction(SIGUSR1, &sa, NULL);
 		sigaction(SIGUSR2, &sa, NULL);
 		ft_char_bits(pid, argv[2]);
