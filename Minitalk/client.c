@@ -12,6 +12,33 @@
 
 #include "minitalk.h"
 
+int ft_atoi(const char *str)
+{
+	int	i;
+	int	nb;
+	int mult;
+
+	i = 0;
+	nb = 0;
+	mult = 1;
+	while(str[i] == ' ' || str[i] == '\t' || str[i] == '\f' || str[i] == '\n' || str[i] == '\v')
+	{
+		i++;
+	}
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			mult *= -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		nb = (nb * 10) + (str[i] - '0');
+		i++;
+	}
+	nb *= mult;
+	return (nb);
+}
 int	is_digit(char *str)
 {
 	int	i;
@@ -46,7 +73,9 @@ void	ft_char_bits(int pid, char *str)
 		while (bits < 8)
 		{
 			if ((str[i] & (0x01 << bits)) != 0)
+			{
 				kill(pid, SIGUSR1);
+			}
 			else
 				kill(pid, SIGUSR2);
 			bits++;
@@ -61,12 +90,12 @@ int	main(int argc, char **argv)
 	int pid;
 	struct sigaction sa;
 
-	if (is_digit(argv[1]) == 1)
-	{
-		printf("le pid est pas bon le sang ta mis des lettres");
-	}
 	if (argc == 3)
 	{
+		if (is_digit(argv[1]) == 1)
+		{
+			printf("le pid est pas bon le sang ta mis des lettres");
+		}
 		pid = ft_atoi(argv[1]);
 		sigemptyset(&sa.sa_mask);
 		sa.sa_flags = SA_SIGINFO;
