@@ -6,7 +6,7 @@
 /*   By: abailleu <abailleu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 16:05:19 by abailleu          #+#    #+#             */
-/*   Updated: 2023/11/13 20:49:21 by abailleu         ###   ########.fr       */
+/*   Updated: 2023/11/18 18:37:41 by abailleu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,10 @@ int	ft_strlen(char *str)
 	}
 	return(i);
 }
-char *ft_strjoin(char *chaine, int e)
+char *ft_strjoin(char *chaine, char e)
 {
 	char *final;
 	int	i;
-
 	i = 0;
 	if(!e)
 		return (0);
@@ -90,14 +89,11 @@ char *ft_strjoin(char *chaine, int e)
 
 void	sig_handler(int signal, siginfo_t *info, void *s)
 {
-	int	bits;
-	int	i;
-    char	*str;
+	static int	bits = 0;
+	static int	i = 0;
+    static char	*str;
 	(void)s;
 
-	bits = 0;
-	i = 0;
-    str = NULL;
 	if (signal == SIGUSR1)
 	{
 		i |= (0x01 << bits);
@@ -105,14 +101,18 @@ void	sig_handler(int signal, siginfo_t *info, void *s)
 	bits++;
 	if (bits == 8)
 	{
-		if(!i)
+		if(i == 0)
 		{
-			printf("%s", str);
+			printf("%s\n", str);
 			free(str);
 			str = NULL;
 			kill(info->si_pid, SIGUSR1);
 		}
-		str = ft_strjoin(str, i);
+		if(i != 0)
+		{
+			str = ft_strjoin(str, i);
+		}
+
         i = 0;
         bits = 0;
 	}
@@ -126,6 +126,7 @@ int	main(int argc, char **argv)
 	printf("voici le PID : %s\n", ft_itoa(getpid()));
 	sig.sa_sigaction = sig_handler;
 	sigemptyset(&sig.sa_mask);
+	sigaddset(&sig.sa_mask, SIGUSR1);
 	sig.sa_flags = SA_SIGINFO;
 	sigaction(SIGUSR1, &sig, NULL);
 	sigaction(SIGUSR2, &sig, NULL);

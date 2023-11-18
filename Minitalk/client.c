@@ -6,22 +6,23 @@
 /*   By: abailleu <abailleu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 18:09:06 by abailleu          #+#    #+#             */
-/*   Updated: 2023/11/13 16:47:00 by abailleu         ###   ########.fr       */
+/*   Updated: 2023/11/18 19:22:39 by abailleu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-int ft_atoi(const char *str)
+int	ft_atoi(const char *str)
 {
 	int	i;
 	int	nb;
-	int mult;
+	int	mult;
 
 	i = 0;
 	nb = 0;
 	mult = 1;
-	while(str[i] == ' ' || str[i] == '\t' || str[i] == '\f' || str[i] == '\n' || str[i] == '\v')
+	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\f' || str[i] == '\n'
+		|| str[i] == '\v')
 	{
 		i++;
 	}
@@ -73,15 +74,23 @@ void	ft_char_bits(int pid, char *str)
 		while (bits < 8)
 		{
 			if ((str[i] & (0x01 << bits)) != 0)
-			{
 				kill(pid, SIGUSR1);
-			}
 			else
 				kill(pid, SIGUSR2);
 			bits++;
-			usleep(100);
+			usleep(5000);
 		}
 		i++;
+	}
+	bits = 0;
+	while (bits < 8)
+	{
+		if (('\0' & (0x01 << bits)) != 0)
+			kill(pid, SIGUSR1);
+		else
+			kill(pid, SIGUSR2);
+		bits++;
+		usleep(5000);
 	}
 }
 
