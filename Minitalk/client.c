@@ -62,6 +62,18 @@ void	ft_cbon(int signal, siginfo_t *info, void *s)
 		printf("Le message est envoyer le san cho");
 }
 
+void ft_dernier_cara(int bits, int pid)
+{
+	while (bits < 8)
+	{
+		if (('\0' & (0x01 << bits)) != 0)
+			kill(pid, SIGUSR1);
+		else
+			kill(pid, SIGUSR2);
+		bits++;
+		usleep(5000);
+	}
+}
 void	ft_char_bits(int pid, char *str)
 {
 	int	i;
@@ -83,15 +95,7 @@ void	ft_char_bits(int pid, char *str)
 		i++;
 	}
 	bits = 0;
-	while (bits < 8)
-	{
-		if (('\0' & (0x01 << bits)) != 0)
-			kill(pid, SIGUSR1);
-		else
-			kill(pid, SIGUSR2);
-		bits++;
-		usleep(5000);
-	}
+	ft_dernier_cara(bits, pid);
 }
 
 int	main(int argc, char **argv)
