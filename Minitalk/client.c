@@ -6,40 +6,12 @@
 /*   By: abailleu <abailleu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 18:09:06 by abailleu          #+#    #+#             */
-/*   Updated: 2023/11/18 19:22:39 by abailleu         ###   ########.fr       */
+/*   Updated: 2023/11/20 16:46:27 by abailleu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "client.h"
 
-int	ft_atoi(const char *str)
-{
-	int	i;
-	int	nb;
-	int	mult;
-
-	i = 0;
-	nb = 0;
-	mult = 1;
-	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\f' || str[i] == '\n'
-		|| str[i] == '\v')
-	{
-		i++;
-	}
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			mult *= -1;
-		i++;
-	}
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		nb = (nb * 10) + (str[i] - '0');
-		i++;
-	}
-	nb *= mult;
-	return (nb);
-}
 int	is_digit(char *str)
 {
 	int	i;
@@ -59,10 +31,10 @@ void	ft_cbon(int signal, siginfo_t *info, void *s)
 	(void)info;
 	(void)s;
 	if (signal == SIGUSR1)
-		printf("Le message est envoyer le san cho");
+		ft_printf("Le message est envoyer le san cho\n");
 }
 
-void ft_dernier_cara(int bits, int pid)
+void	ft_dernier_cara(int bits, int pid)
 {
 	while (bits < 8)
 	{
@@ -74,6 +46,7 @@ void ft_dernier_cara(int bits, int pid)
 		usleep(5000);
 	}
 }
+
 void	ft_char_bits(int pid, char *str)
 {
 	int	i;
@@ -100,15 +73,13 @@ void	ft_char_bits(int pid, char *str)
 
 int	main(int argc, char **argv)
 {
-	int pid;
-	struct sigaction sa;
+	int					pid;
+	struct sigaction	sa;
 
 	if (argc == 3)
 	{
 		if (is_digit(argv[1]) == 1)
-		{
-			printf("le pid est pas bon le sang ta mis des lettres");
-		}
+			ft_printf("le pid est pas bon le sang ta mis des lettres\n");
 		pid = ft_atoi(argv[1]);
 		sigemptyset(&sa.sa_mask);
 		sa.sa_flags = SA_SIGINFO;
@@ -119,7 +90,7 @@ int	main(int argc, char **argv)
 	}
 	else
 	{
-		printf("rentre un truc correcte le sang sinon t fini genre ca :");
-		printf(" \n ./client <pid> <ton_message>");
+		ft_printf("rentre un truc correcte le sang sinon t fini genre ca :");
+		ft_printf(" \n ./client <pid> <ton_message>\n");
 	}
 }

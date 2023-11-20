@@ -6,124 +6,87 @@
 /*   By: abailleu <abailleu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/03 16:05:19 by abailleu          #+#    #+#             */
-/*   Updated: 2023/11/18 18:37:41 by abailleu         ###   ########.fr       */
+/*   Updated: 2023/11/20 16:45:01 by abailleu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
-
-char *ft_itoa(int nbr) 
-{
-	if(nbr == -2147483648)
-		return("-2147483648\0");
-	int n = nbr;
-	int len = 0;
-	if (nbr <= 0)
-	{
-		len++;
-    	}
-	while (n) 
-	{
-		n /= 10;
-		len++;
-	}
-	char *result = (char *)malloc(sizeof(char) * (len + 1));
-	if (result == NULL) 
-		return NULL;
-	result[len] = '\0';
-	if (nbr == 0)
-	{
-		result[0] = '0';
-		return(result);
-	}
-	if (nbr < 0) 
-	{
-		result[0] = '-';
-		nbr = -nbr;
-	}
-	while (nbr) 
-	{
-		result[--len] = nbr % 10 + '0';
-		nbr /= 10;
-	}
-	return result;
-}
+#include "server.h"
 
 int	ft_strlen(char *str)
 {
 	int	i;
 
 	i = 0;
-	while(str[i])
+	while (str[i])
 	{
 		i++;
 	}
-	return(i);
+	return (i);
 }
-char *ft_strjoin(char *chaine, char e)
+
+char	*ft_strjoin(char *chaine, char e)
 {
-	char *final;
-	int	i;
+	char	*final;
+	int		i;
+
 	i = 0;
-	if(!e)
+	if (!e)
 		return (0);
-	if(!chaine)
+	if (!chaine)
 	{
 		final = malloc(sizeof(char) * 2);
 		if (!final)
-			return(0);
+			return (0);
 		final[0] = e;
 		final[1] = '\0';
 		return (final);
 	}
 	final = (char *)malloc(sizeof(char) * (ft_strlen(chaine) + 2));
-	while(chaine[i])
+	while (chaine[i])
 	{
 		final[i] = chaine[i];
 		i++;
 	}
 	final[i] = e;
 	final[i + 1] = '\0';
-	return(final);
+	return (final);
 }
 
 void	sig_handler(int signal, siginfo_t *info, void *s)
 {
 	static int	bits = 0;
 	static int	i = 0;
-    static char	*str;
-	(void)s;
+	static char	*str;
 
+	(void)s;
 	if (signal == SIGUSR1)
-	{
 		i |= (0x01 << bits);
-	}
 	bits++;
 	if (bits == 8)
 	{
-		if(i == 0)
+		if (i == 0)
 		{
-			printf("%s\n", str);
+			ft_printf("%s\n", str);
 			free(str);
 			str = NULL;
 			kill(info->si_pid, SIGUSR1);
 		}
-		if(i != 0)
-		{
+		if (i != 0)
 			str = ft_strjoin(str, i);
-		}
-
-        i = 0;
-        bits = 0;
+		i = 0;
+		bits = 0;
 	}
 	kill(info->si_pid, SIGUSR2);
 }
 
 int	main(int argc, char **argv)
 {
-	struct sigaction sig;
+	struct sigaction	sig;
+	int					pid;
 
-	printf("voici le PID : %s\n", ft_itoa(getpid()));
+	pid = getpid();
+	(void)argv;
+	ft_printf("voici le PID : %d\n", pid);
 	sig.sa_sigaction = sig_handler;
 	sigemptyset(&sig.sa_mask);
 	sigaddset(&sig.sa_mask, SIGUSR1);
